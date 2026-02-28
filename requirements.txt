@@ -1,0 +1,10 @@
+pydantic
+pydantic-settings
+python-dotenv
+pandas
+pyarrow
+langgraph
+langchain
+langchain-openai
+openai
+streamlit
