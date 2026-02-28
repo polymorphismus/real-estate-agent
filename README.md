@@ -9,7 +9,6 @@ The system is delivered with a simple Streamlit chat UI for interactive use.
 
 The implementation uses a local dataset stored at `data/cortex.parquet`.
 
-## What The Agent Can Do
 Examples of supported questions:
 - "Show me P&L for 2024-Q1"
 - "Which building has the most tenants?"
