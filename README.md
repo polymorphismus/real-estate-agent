@@ -159,15 +159,16 @@ The final response is generated in concise natural language based on:
 - profile context for definition/methodology questions
 
 ## Current Intent Boundary
-The system uses two main in-scope lanes:
+The system currently uses the following intent categories.
 
-### `definitions`
+### In-Scope Intents
+#### `definitions`
 Intended primarily for profile-only explanatory questions, such as:
 - "How do you calculate P&L in this system?"
 - "Which ledger types are used in P&L calculation?"
 - schema/field-definition style explanations
 
-### `dataset_knowledge`
+#### `dataset_knowledge`
 Used for anything that requires actual dataset retrieval, filtering, matching, aggregation, or derived values, such as:
 - min/max time coverage
 - distinct ledger groups
@@ -180,6 +181,19 @@ This separation is enforced by:
 - a deterministic post-classification eligibility gate for `definitions`
 
 That gate prevents “definition-like” wording from incorrectly bypassing the dataset query path.
+
+### Fallback And Control Intents
+#### `general_knowledge`
+Used for questions that are outside the dataset domain and should return an out-of-scope response.
+
+#### `ambiguous`
+Used when the request is incomplete, unclear, or missing required context and the system should ask a clarification question.
+
+#### `adversarial`
+Used for unsafe, manipulative, or policy-violating requests that should be blocked.
+
+#### `gibberish`
+Used for unparseable or non-meaningful input that cannot be understood reliably.
 
 ## Key Design Decisions
 ### 1. Combined Intent + Extraction
@@ -220,7 +234,7 @@ This keeps the system safer while still allowing useful pandas operations.
 
 ## Challenges And How They Were Solved
 ### 1. Balancing Intent Routing Precision
-Natural-language asset-management questions often look similar on the surface, but require different handling paths. Some requests are best answered directly from system context, while others require dataset retrieval, aggregation, or filtering. A key challenge was designing routing logic that stays accurate across both straightforward and ambiguous user inputs without overfitting to narrow phrasing patterns.
+Natural-language asset-management questions often look similar on the surface, but require different handling paths. Some requests are best answered directly from system context, while others require dataset retrieval, aggregation, or filtering. A key challenge was designing routing logic that stays accurate across both straightforward and ambiguous user inputs.
 
 Solution:
 - combine intent classification and entity extraction in one structured step
@@ -273,7 +287,3 @@ The core submission-relevant files are:
 - [codegen_service.py](src/services/codegen_service.py): code generation and execution
 - [response_service.py](src/services/response_service.py): final answer generation
 - [llm_client.py](src/services/llm_client.py): OpenAI client wrapper
-
-## Notes
-- The current implementation is optimized around correctness, clarity of orchestration, and robust handling of varied inputs.
-- The Streamlit app is intentionally simple; the main effort is in the LangGraph workflow and the agent’s internal decision-making.
